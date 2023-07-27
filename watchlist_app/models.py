@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
 
+
 CATEGORY_CHOICES = (
     ("MOVIE", "MOVIE"),
     ("SERIES", "SERIES"),

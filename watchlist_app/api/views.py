@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from watchlist_app.models import WatchList, Review, StreamPlatform
-from .serializers import WatchlistSerializer, ReviewSerializer, StreamPlatformSerializer
+from . import serializers
 
 ################################Class Based Views##############################
 class WatchlistCBView1(APIView):
@@ -16,14 +16,39 @@ class WatchlistCBView1(APIView):
         Return a list of all watchlist.
         """
         watchlist = WatchList.objects.all()
-        serializer = WatchlistSerializer(watchlist, many = True, context={'request': request})
+        serializer = serializers.WatchlistSerializer(watchlist, many = True, context={'request': request})
         return Response(serializer.data)
     
     def post(self, request, format=None):
         """
         Create a new watchlist.
         """
-        serializer = WatchlistSerializer(data=request.data)
+        serializer = serializers.WatchlistSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# WatchlistCBView1 using WatchListModelSerializer
+class WatchlistCBView2(APIView):
+    """
+    View to list all Movies in the system.
+    """
+    def get(self, request, format=None):
+        """
+        Return a list of all watchlist.
+        """
+        watchlist = WatchList.objects.all()
+        serializer = serializers.WatchListModelSerializer(watchlist, many = True, context={'request': request})
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        """
+        Create a new watchlist.
+        """
+        serializer = serializers.WatchListModelSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -33,12 +58,12 @@ class WatchlistCBView1(APIView):
             
 class WatchlistDetailCBView1(APIView):
     """
-    View to list all Movies in the system.
+    View in detail individual Watchlist in the system.
     """
     def get(self, request, pk, format=None):
         try:
             watchlist = WatchList.objects.get(pk=pk)
-            serializer = WatchlistSerializer(watchlist)
+            serializer = serializers.WatchlistSerializer(watchlist)
             return Response(serializer.data)
         except WatchList.DoesNotExist:
             raise Http404
@@ -46,7 +71,7 @@ class WatchlistDetailCBView1(APIView):
     def put(self, request, pk):
         try:
             watchlist = WatchList.objects.get(pk=pk)
-            serializer = WatchlistSerializer(watchlist, data=request.data)
+            serializer = serializers.WatchlistSerializer(watchlist, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -58,14 +83,21 @@ class WatchlistDetailCBView1(APIView):
     def patch(self, request, pk):
         try:
             watchlist = WatchList.objects.get(pk=pk)
-            serializer = WatchlistSerializer(watchlist, data=request.data, partial=True)
+            serializer = serializers.WatchlistSerializer(watchlist, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
         except WatchList.DoesNotExist:
             raise Http404
+        
+    def delete(self, request, pk):
+        try:
+            watchlist = WatchList.objects.get(pk=pk)
+            watchlist.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as err:
+            raise Http404
     
-
 
 class ReviewlistCBView1(APIView):
     """
@@ -76,7 +108,19 @@ class ReviewlistCBView1(APIView):
         Return a list of all watchlist.
         """
         reviews = Review.objects.all()
-        serializer = ReviewSerializer(reviews, many = True)
+        serializer = serializers.ReviewSerializer(reviews, many = True)
+        return Response(serializer.data)
+    
+class ReviewlistCBView2(APIView):
+    """
+    View to list all Reviews in the system.
+    """
+    def get(self, request, format=None):
+        """
+        Return a list of all watchlist.
+        """
+        reviews = Review.objects.all()
+        serializer = serializers.ReviewModelSerializer(reviews, many = True)
         return Response(serializer.data)
     
 
@@ -91,8 +135,48 @@ class StreamPlatformDetailView1(APIView):
         except StreamPlatform.DoesNotExist:
             return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = StreamPlatformSerializer(platform)
+        serializer = serializers.StreamPlatformSerializer(platform)
         return Response(serializer.data)
+    
+
+class StreamPlatformListView2(APIView):
+    """
+    Stream Platform List View
+    """
+    
+    def get(self, request, format=None):
+        """
+        Return a list of all watchlist.
+        """
+        watchlist = StreamPlatform.objects.all()
+        serializer = serializers.StreamPlatformModelSerializer(watchlist, many = True, context={'request': request})
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        """
+        Create a new watchlist.
+        """
+        serializer = serializers.StreamPlatformModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StreamPlatformDetailView2(APIView):
+    """
+    Stream Platform Detail View
+    """
+    
+    def get(self, request, pk):
+        try:
+            platform = StreamPlatform.objects.get(pk=pk)
+        except StreamPlatform.DoesNotExist:
+            return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = serializers.StreamPlatformModelSerializer(platform)
+        return Response(serializer.data)
+    
     
 
 
@@ -101,7 +185,7 @@ class StreamPlatformDetailView1(APIView):
 def WatchlistFunctionView(request):
     if request.method == 'GET':
         watchlist = WatchList.objects.all()
-        serializer = WatchlistSerializer(watchlist, many=True)
+        serializer = serializers.WatchlistSerializer(watchlist, many=True)
         # Handle GET request
         data = {'message': 'This is a GET request'}
         return Response(serializer.data)
