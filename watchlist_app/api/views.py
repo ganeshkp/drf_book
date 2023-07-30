@@ -223,7 +223,7 @@ class StreamPlatformDetailView3(APIView):
         except StreamPlatform.DoesNotExist:
             return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = serializers.StreamPlatformHyperlinkedModelSerializer(platform)
+        serializer = serializers.StreamPlatformHyperlinkedModelSerializer(platform, context={'request': request})
         return Response(serializer.data)
   
 
