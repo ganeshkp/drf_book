@@ -19,6 +19,9 @@ urlpatterns = [
     path('watchlist-detail-cbv-try3/<int:pk>/', views.WatchlistDetailCBView3.as_view(), name="watchlist-detail-cbv-try3"),
     path('streamplatform-detail-cbv-try3/<int:pk>/', views.StreamPlatformDetailView3.as_view(), name="streamplatform-detail-cbv-try3"),
     
+    # Using ListSerializer
+    path('watchlist-cbv-try4/', views.WatchlistCBView4.as_view(), name="watchlist-cbv-try4"),
+    
     
     
     

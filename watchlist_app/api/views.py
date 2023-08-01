@@ -226,7 +226,27 @@ class StreamPlatformDetailView3(APIView):
         serializer = serializers.StreamPlatformHyperlinkedModelSerializer(platform, context={'request': request})
         return Response(serializer.data)
   
-
+#=============Views Using ListModelSerializer=================
+class WatchlistCBView4(APIView):
+    """
+    View to list all Movies in the system.
+    """
+    def get(self, request, format=None):
+        """
+        Return a list of all watchlist.
+        """
+        watchlist = WatchList.objects.all()
+        serializer = serializers.WatchlistDemoListSerializer(watchlist, many = True, context={'request': request})
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        """
+        Create a new watchlist.
+        """
+        serializer = serializers.WatchlistDemoListSerializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 ################################Function Based Views##############################
 @api_view(['GET', 'POST'])

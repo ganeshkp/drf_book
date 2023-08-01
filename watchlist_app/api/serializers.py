@@ -183,3 +183,25 @@ class StreamPlatformHyperlinkedModelSerializer(serializers.HyperlinkedModelSeria
             'url':{'view_name':'streamplatform-detail-cbv-try3', 'lookup_field':'pk'}            
         }
 
+##################################ListSerializer##########################
+
+class CustomWatchlistListSerializer(serializers.ListSerializer):
+    update_data=[]
+    
+    def create(self, validated_data):
+        # You can do some validation here before making bulk create
+        watchlist = [WatchList(**item) for item in validated_data]
+        return WatchList.objects.bulk_create(watchlist)
+    
+    
+    
+class WatchlistDemoListSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = WatchList
+        fields = "__all__"
+        extra_kwargs = {
+            'imdb_rating': {'validators':[MinValueValidator(1.0), MaxValueValidator(5.0)]}
+        }
+        
+        list_serializer_class = CustomWatchlistListSerializer
