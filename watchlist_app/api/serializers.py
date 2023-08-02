@@ -191,11 +191,39 @@ class CustomWatchlistListSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         # You can do some validation here before making bulk create
         watchlist = [WatchList(**item) for item in validated_data]
-        return WatchList.objects.bulk_create(watchlist)
+        result = WatchList.objects.bulk_create(watchlist)
+        self.create_or_update(self.instance, validated_data)
+        return result
+    
+    def create_or_update(self, instance, validated_data):
+        # Maps for id->instance and id->data item.
+        watchlist_mapping = {watchlist.id: watchlist for watchlist in instance}
+        data_mapping = {item['id']: item for item in validated_data}
+
+        # Perform creations and updates.
+        ret = []
+        for watchlist_id, data in data_mapping.items():
+            watchlist = watchlist_mapping.get(watchlist_id, None)
+            if watchlist is None:
+                ret.append(self.child.create(data))
+            else:
+                ret.append(self.child.update(watchlist, data))
+
+        # Perform deletions.
+        for watchlist_id, watchlist in watchlist_mapping.items():
+            if watchlist_id not in data_mapping:
+                watchlist.delete()
+
+        return ret
+
+    
+    def validate(self, attrs):
+        return super().validate(attrs)
     
     
     
 class WatchlistDemoListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     
     class Meta:
         model = WatchList
@@ -205,3 +233,63 @@ class WatchlistDemoListSerializer(serializers.ModelSerializer):
         }
         
         list_serializer_class = CustomWatchlistListSerializer
+        
+    def create(self, validated_data):
+        instance = WatchList(**validated_data)
+        
+        if(isinstance(self._kwargs["data"], dict)):
+            instance.save()
+            
+        return instance
+
+##################################BaseSerializer##########################
+class WatchlistBaseSerializer(serializers.BaseSerializer):
+    def to_representation(self, instance):
+        return {
+            'title': instance.title,
+            'platform': instance.platform.name,
+            'category': instance.category,
+        }
+        
+    def to_internal_value(self, data):
+        instance_data = data["resource"]
+        title = instance_data.get('title')
+        storyline = instance_data.get('storyline')
+        category = instance_data.get('category')
+        imdb_rating = instance_data.get("imdb_rating")
+        created = instance_data.get("created")
+        platform = instance_data.get('platform')
+        platform = StreamPlatform.objects.filter(name=platform).first()     
+
+        # Perform the data validation.
+        if not title:
+            raise serializers.ValidationError({
+                'title': 'This field is required.'
+            })
+        if not category:
+            raise serializers.ValidationError({
+                'category': 'This field is required.'
+            })
+        if len(title) > 50:
+            raise serializers.ValidationError({
+                'title': 'May not be more than 50 characters.'
+            })
+            
+        if not platform:
+            raise serializers.ValidationError({
+                'platform': 'Valid platform name is required.'
+            })
+
+        # Return the validated values. This will be available as
+        # the `.validated_data` property.
+        return {
+            'title': title,
+            'category': category,
+            'platform': platform,
+            'storyline': storyline,
+            'imdb_rating': imdb_rating,
+            'created': created
+        }
+
+    def create(self, validated_data):
+        return WatchList.objects.create(**validated_data)

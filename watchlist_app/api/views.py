@@ -247,6 +247,38 @@ class WatchlistCBView4(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def put(self, request, format=None):
+        serializer = serializers.WatchlistDemoListSerializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+
+        # Perform the bulk update
+        serializer.save()
+
+        return Response(serializer.data)
+
+
+#=============Views Using BaseSerializer=================
+class WatchlistCBView5(APIView):
+    """
+    View to list all Movies in the system.
+    """
+    def get(self, request, format=None):
+        """
+        Return a list of all watchlist.
+        """
+        watchlist = WatchList.objects.all()
+        serializer = serializers.WatchlistBaseSerializer(watchlist, many = True)
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        """
+        Create a new watchlist.
+        """
+        serializer = serializers.WatchlistBaseSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 ################################Function Based Views##############################
 @api_view(['GET', 'POST'])
@@ -261,3 +293,5 @@ def WatchlistFunctionView(request):
         # Handle POST request
         data = {'message': 'This is a POST request'}
         return Response(data)
+    
+    
