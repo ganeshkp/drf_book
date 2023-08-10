@@ -2,6 +2,10 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics
+from rest_framework import filters
+from rest_framework.pagination import PageNumberPagination
+
 from django.http import Http404
 from watchlist_app.models import WatchList, Review, StreamPlatform
 from . import serializers
@@ -279,6 +283,56 @@ class WatchlistCBView5(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#=============Views Using GenericAPIView=================
+class WatchlistCBView6(generics.GenericAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    pagination_class = PageNumberPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]  # Set the filter backends
+    
+    # Specify the fields that can be used for search and ordering
+    search_fields = ['title','imdb_rating']
+    ordering_fields = ['title', 'imdb_rating', 'created']
+    
+    def get_serializer_class(self):
+        # Determine the serializer class based on the request method
+        if self.request.method == 'POST':
+            return serializers.WatchListModelSerializer
+        elif self.request.method == 'GET':
+            return serializers.WatchlistModelBasicSerializer
+    
+    def get(self, request, *args, **kwargs):
+        """
+        Return a list of all watchlist.
+        """
+        watchlist = queryset = self.filter_queryset(self.get_queryset())  # Apply search filter
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(watchlist, many=True, context={"request":request})
+        return Response(serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+        """
+        Create a new watchlist.
+        """
+        serializer_class = self.get_serializer_class(data=request.data)
+        serializer = serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class WatchlistDetailVBView6(generics.GenericAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    lookup_field = "title" # Set the lookup field to 'title' or any other field you prefer
+    lookup_url_kwarg = 'title'
+    
+
+
+
 
 ################################Function Based Views##############################
 @api_view(['GET', 'POST'])

@@ -25,6 +25,9 @@ urlpatterns = [
     # Using BaseSerializer for the views
     path('watchlist-cbv-try5/', views.WatchlistCBView5.as_view(), name="watchlist-cbv-try5"),
     
+    # Using GenericAPIView for the views
+    path('watchlist-cbv-try6/', views.WatchlistCBView6.as_view(), name="watchlist-cbv-try6"),
+    
     
     
     

@@ -82,6 +82,13 @@ class ReviewSerializer(serializers.Serializer):
     
 #############################ModelSerializer#########################
 
+class WatchlistModelBasicSerializer(serializers.ModelSerializer):
+    platform = serializers.StringRelatedField()
+    
+    class Meta:
+        model=WatchList
+        fields = ["title", "platform", "imdb_rating", "created"]
+
 class WatchListModelSerializer(serializers.ModelSerializer):
     full_title = serializers.SerializerMethodField()
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
