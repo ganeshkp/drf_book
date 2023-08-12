@@ -27,6 +27,7 @@ urlpatterns = [
     
     # Using GenericAPIView for the views
     path('watchlist-cbv-try6/', views.WatchlistCBView6.as_view(), name="watchlist-cbv-try6"),
+    path('watchlist-detail-cbv-try6/<str:title>/', views.WatchlistDetailVBView6.as_view(), name="watchlist-detail-cbv-try6"),
     
     
     

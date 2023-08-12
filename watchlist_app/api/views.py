@@ -295,6 +295,10 @@ class WatchlistCBView6(generics.GenericAPIView):
     search_fields = ['title','imdb_rating']
     ordering_fields = ['title', 'imdb_rating', 'created']
     
+    def get_queryset(self):
+        # Custom queryset logic, e.g., applying filters or ordering
+        return WatchList.objects.filter(active=True).order_by('title')
+    
     def get_serializer_class(self):
         # Determine the serializer class based on the request method
         if self.request.method == 'POST':
@@ -306,9 +310,14 @@ class WatchlistCBView6(generics.GenericAPIView):
         """
         Return a list of all watchlist.
         """
-        watchlist = queryset = self.filter_queryset(self.get_queryset())  # Apply search filter
+        watchlist = self.filter_queryset(self.get_queryset())  # Apply search filter
         serializer_class = self.get_serializer_class()
-        serializer = serializer_class(watchlist, many=True, context={"request":request})
+        page = self.paginate_queryset(watchlist)
+        if page is not None:            
+            serializer = serializer_class(watchlist, many=True, context=self.get_serializer_context())
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(watchlist, many=True)
         return Response(serializer.data)
     
     def post(self, request, *args, **kwargs):
@@ -322,6 +331,12 @@ class WatchlistCBView6(generics.GenericAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        # You can add more context data here
+        context["name"] = "TEST"
+        return context
     
     
 class WatchlistDetailVBView6(generics.GenericAPIView):
@@ -329,6 +344,30 @@ class WatchlistDetailVBView6(generics.GenericAPIView):
     serializer_class = serializers.WatchListModelSerializer
     lookup_field = "title" # Set the lookup field to 'title' or any other field you prefer
     lookup_url_kwarg = 'title'
+
+    # Specify the fields that can be used for search and ordering
+    search_fields = ['title','imdb_rating']
+    ordering_fields = ['title', 'imdb_rating', 'created']
+    
+    def get_queryset(self):
+        return WatchList.objects.filter(active=True)
+    
+    def filter_queryset(self, queryset):
+        # Apply filters based on the lookup field (e.g., title)
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}
+        queryset = queryset.filter(**filter_kwargs)
+        return queryset
+    
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}  # Assuming URL pattern captures 'title'
+        obj = generics.get_object_or_404(queryset, **filter_kwargs)
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()  # Retrieve the instance using get_object
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
     
 
 
