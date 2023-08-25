@@ -29,6 +29,21 @@ urlpatterns = [
     path('watchlist-cbv-try6/', views.WatchlistCBView6.as_view(), name="watchlist-cbv-try6"),
     path('watchlist-detail-cbv-try6/<str:title>/', views.WatchlistDetailVBView6.as_view(), name="watchlist-detail-cbv-try6"),
     
+    #Using ListModelMixin and GenericAPIView for views
+    path('watchlist-cbv-try7/', views.WatchlistCBView7.as_view(), name="watchlist-cbv-try7"),
+    
+    #Using CreateModelMixin and GenericAPIView for views
+    path('watchlist-cbv-try8/', views.WatchlistCBView8.as_view(), name="watchlist-cbv-try8"),    
+    
+    #Using RetrieveModelMixin and GenericAPIView for views
+    path('watchlist-cbv-try9/<int:pk>/', views.WatchlistCBView9.as_view(), name="watchlist-cbv-try9"),
+    
+    #Using UpdateModelMixin and GenericAPIView for views
+    path('watchlist-cbv-try10/<int:pk>/', views.WatchlistCBView10.as_view(), name="watchlist-cbv-try10"),
+    
+    #Using DestroyModelMixin and GenericAPIView for views
+    path('watchlist-cbv-try11/<int:pk>/', views.WatchlistCBView11.as_view(), name="watchlist-cbv-try11"),
+    
     
     
     

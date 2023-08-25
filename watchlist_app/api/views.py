@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import mixins
 
 from django.http import Http404
 from watchlist_app.models import WatchList, Review, StreamPlatform
@@ -369,8 +370,62 @@ class WatchlistDetailVBView6(generics.GenericAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
     
+#=======================Views using ListModelMixin and GenericAPIView=====
+class WatchlistCBView7(generics.GenericAPIView, mixins.ListModelMixin):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+#=======================Views using CreateModelMixin and GenericAPIView=====
+class WatchlistCBView8(generics.GenericAPIView, mixins.CreateModelMixin):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+    def perform_create(self, serializer):
+        # Customize the creation process here, e.g., setting additional fields
+        # before saving the object to the database.
+        serializer.save()
 
+    def post(self,request,*args,  **kwargs):
+        return self.create(request, *args, **kwargs)
+        
+#=======================Views using RetrieveModelMixin and GenericAPIView=====
+class WatchlistCBView9(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
+#=======================Views using UpdateModelMixin and GenericAPIView=====
+class WatchlistCBView10(generics.GenericAPIView, mixins.UpdateModelMixin):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+    def perform_update(self, serializer):
+        # Customize the update process here, e.g., perform additional
+        # actions before saving the updated object.
+        serializer.save()  # Saving the updated object
+        
+    def put(self,request, *args , **kwargs):
+        # Use the update method provided by UpdateModelMixin
+        return self.update(request, *args, **kwargs)
+    
+#=======================Views using DestroyModelMixin and GenericAPIView=====
+class WatchlistCBView11(generics.GenericAPIView, mixins.DestroyModelMixin):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+    def perform_destroy(self, instance):
+        # Customize the destruction process here, e.g., perform additional
+        # actions before deleting the object.
+        instance.delete()  # Delete the object
+
+    def delete(self,request, *args , **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+
+    
 
 
 ################################Function Based Views##############################
