@@ -424,8 +424,79 @@ class WatchlistCBView11(generics.GenericAPIView, mixins.DestroyModelMixin):
     def delete(self,request, *args , **kwargs):
         return self.destroy(request, *args, **kwargs)
     
-
+#=======================Views using CreateAPIView=======================
+class WatchlistCBView12(generics.CreateAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
     
+    def perform_create(self, serializer):
+        # Customize the creation process here, e.g., setting additional fields
+        # before saving the object to the database.
+        serializer.save()
+
+#=======================Views using ListAPIView=======================   
+class WatchlistCBView13(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+
+    def get_queryset(self):
+        # Customize the queryset here, e.g., apply filters or annotations
+        return WatchList.objects.filter(active=True)
+    
+#=======================Views using RetrieveAPIView====================
+class WatchlistCBView14(generics.RetrieveAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    lookup_field = "title" # Set the lookup field to 'title' or any other field you prefer
+    
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}  # Assuming URL pattern captures 'title'
+        obj = generics.get_object_or_404(queryset, **filter_kwargs)
+        return obj
+    
+#=======================Views using DestroyAPIView====================
+class WatchlistCBView15(generics.DestroyAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    lookup_field = "title" # Set the lookup field to 'title' or any other field you prefer
+    
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        filter_kwargs = {self.lookup_field: self.kwargs[self.lookup_field]}  # Assuming URL pattern captures 'title'
+        obj = generics.get_object_or_404(queryset, **filter_kwargs)
+        return obj
+    
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response({"detail": "WatchList object deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    
+#=======================Views using UpdateAPIView======================
+class WatchlistCBView16(generics.UpdateAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+#=======================Views using ListCreateAPIView======================
+class WatchlistCBView17(generics.ListCreateAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+#=======================Views using RetrieveUpdateAPIView======================
+class WatchlistCBView18(generics.RetrieveUpdateAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+#=======================Views using RetrieveDestroyAPIView======================
+class WatchlistCBView19(generics.RetrieveDestroyAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+#=======================Views using RetrieveUpdateDestroyAPIView======================
+class WatchlistCBView20(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+
 
 
 ################################Function Based Views##############################

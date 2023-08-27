@@ -7,6 +7,7 @@ urlpatterns = [
     path('watchlist-detail-cbv-try1/<int:pk>/', views.WatchlistDetailCBView1.as_view(), name="watchlist-detail-cbv-try1"),
     path('streamplatform-cbv-try1/', views.StreamPlatformDetailView1.as_view(), name="streamplatform-cbv-try1"),
     path('streamplatform-detail-cbv-try1/<int:pk>/', views.StreamPlatformDetailView1.as_view(), name="streamplatform-detail-cbv-try1"),
+    path('reviewlist-cbv-try1/', views.ReviewlistCBView1.as_view(), name="reviewlist-cbv-try1"),
     
     # Using ModelSerializer for the views
     path('watchlist-cbv-try2/', views.WatchlistCBView2.as_view(), name="watchlist-cbv-try2"),
@@ -44,14 +45,40 @@ urlpatterns = [
     #Using DestroyModelMixin and GenericAPIView for views
     path('watchlist-cbv-try11/<int:pk>/', views.WatchlistCBView11.as_view(), name="watchlist-cbv-try11"),
     
+    #Using CreateAPIView for views
+    path('watchlist-cbv-try12/', views.WatchlistCBView12.as_view(), name="watchlist-cbv-try12"),
+    
+    #Using ListAPIView for views
+    path('watchlist-cbv-try13/', views.WatchlistCBView13.as_view(), name="watchlist-cbv-try13"),
+    
+    #Using RetrieveAPIView for views
+    path('watchlist-cbv-try14/<str:title>/', views.WatchlistCBView14.as_view(), name="watchlist-cbv-try14"),
+    
+    #Using DestroyAPIView for views
+    path('watchlist-cbv-try15/<str:title>/', views.WatchlistCBView15.as_view(), name="watchlist-cbv-try15"),
+    
+    #Using UpdateAPIView
+    path('watchlist-cbv-try16/<int:pk>/', views.WatchlistCBView16.as_view(), name="watchlist-cbv-try16"),
+    
+    #Using ListCreateAPIView for views
+    path('watchlist-cbv-try17/', views.WatchlistCBView17.as_view(), name="watchlist-cbv-try17"),
+    
+    #Using RetrieveUpdateAPIView
+    path('watchlist-cbv-try18/<int:pk>/', views.WatchlistCBView18.as_view(), name="watchlist-cbv-try18"),
+    
+    #Using RetrieveDestroyAPIView
+    path('watchlist-cbv-try19/<int:pk>/', views.WatchlistCBView19.as_view(), name="watchlist-cbv-try19"),
+    
+    #Using RetrieveUpdateDestroyAPIView
+    path('watchlist-cbv-try20/<int:pk>/', views.WatchlistCBView20.as_view(), name="watchlist-cbv-try20"),
     
     
     
     
     
     
-    #Review urls
-    path('reviewlist-cbv-try1/', views.ReviewlistCBView1.as_view(), name="reviewlist-cbv-try1"),
+    
+    
     
     
     
