@@ -1,5 +1,9 @@
 from django.urls import path, include
 from watchlist_app.api import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r"watchlist-viewset1", views.WatchListViewSet1, basename="watchlist-viewset1")
 
 urlpatterns = [
     # Using Basic Serializer for the views
@@ -72,18 +76,14 @@ urlpatterns = [
     #Using RetrieveUpdateDestroyAPIView
     path('watchlist-cbv-try20/<int:pk>/', views.WatchlistCBView20.as_view(), name="watchlist-cbv-try20"),
     
+    #Using MultipleFieldLookupMixin
+    path('watchlist-cbv-try21/<str:title>/', views.WatchlistCBView21.as_view(), name='watchlist-cbv-try21'),
     
+    #Using Custom Base class for views
+    path('watchlist-cbv-try22/', views.WatchlistCBView22.as_view(), name="watchlist-cbv-try22"),
+    path('watchlist-cbv-try23/', views.WatchlistCBView23.as_view(), name="watchlist-cbv-try23"),
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    # Using ViewSet
+    path("", include(router.urls))    
     
 ]

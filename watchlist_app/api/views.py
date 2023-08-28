@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework import generics
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
@@ -10,6 +10,7 @@ from rest_framework import mixins
 from django.http import Http404
 from watchlist_app.models import WatchList, Review, StreamPlatform
 from . import serializers
+from watchlist_app.api.mixins import MultipleFieldLookupMixin, TotalEpisodesMixin
 
 ################################Class Based Views##############################
 
@@ -497,6 +498,82 @@ class WatchlistCBView20(generics.RetrieveUpdateDestroyAPIView):
     queryset = WatchList.objects.all()
     serializer_class = serializers.WatchListModelSerializer
 
+#=======================Views using MultipleFieldLookupMixin======================
+class WatchlistCBView21(MultipleFieldLookupMixin, generics.RetrieveAPIView):
+    """
+    Retrieve a WatchList object using multiple field lookup.
+    """
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+
+    # Define the fields to use for multiple field lookup
+    lookup_fields = ['title']  # Customize this based on your needs
+
+    # Optionally, you can override other methods or add custom behavior as needed.
+    
+#=======================Views using Custom Base class======================
+class WatchListBaseView1():
+    """
+    Custom base view class for WatchList.
+    """
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+class WatchlistCBView22(WatchListBaseView1, generics.ListAPIView):
+    """
+    View to list Watchlist or to create a new watchlist
+    """
+    pass
+    # Add view-specific logic here
+
+
+class WatchlistCBView23(WatchListBaseView1, generics.CreateAPIView):
+    """
+    View to list Watchlist or to create a new watchlist
+    """
+    pass
+    # Add view-specific logic here
+    
+#=======================Views using ViewSets======================
+class WatchListViewSet1(viewsets.ViewSet):
+    def list(self, request):
+        queryset = WatchList.objects.all()
+        serializer = serializers.WatchListModelSerializer(queryset, many=True, context={"request":request})
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.WatchListModelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = WatchList.objects.all()
+        watchlist = generics.get_object_or_404(queryset, pk=pk)
+        serializer = serializers.WatchListModelSerializer(watchlist, context={"request":request})
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        watchlist = generics.get_object_or_404(WatchList.objects.all(), pk=pk)
+        serializer = serializers.WatchListModelSerializer(watchlist, data=request.data, context={"request":request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def partial_update(self, request, pk=None):
+        watchlist = generics.get_object_or_404(WatchList.objects.all(), pk=pk)
+        serializer = serializers.WatchListModelSerializer(watchlist, data=request.data, partial=True, context={"request":request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        watchlist = generics.get_object_or_404(WatchList.objects.all(), pk=pk)
+        watchlist.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 ################################Function Based Views##############################
