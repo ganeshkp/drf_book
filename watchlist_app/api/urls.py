@@ -3,7 +3,14 @@ from watchlist_app.api import views
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
+# Using ViewSet
 router.register(r"watchlist-viewset1", views.WatchListViewSet1, basename="watchlist-viewset1")
+
+# Using GenericViewSet
+router.register(r"watchlist-viewset2", views.WatchListViewSet2, basename="watchlist-viewset2")
+
+# Using ModelViewSet
+router.register(r"watchlist-viewset3", views.WatchListViewSet3, basename="watchlist-viewset3")
 
 urlpatterns = [
     # Using Basic Serializer for the views

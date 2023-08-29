@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import mixins
+from rest_framework.decorators import action
 
 from django.http import Http404
 from watchlist_app.models import WatchList, Review, StreamPlatform
@@ -536,9 +537,9 @@ class WatchlistCBView23(WatchListBaseView1, generics.CreateAPIView):
     
 #=======================Views using ViewSets======================
 class WatchListViewSet1(viewsets.ViewSet):
-    def list(self, request):
-        queryset = WatchList.objects.all()
-        serializer = serializers.WatchListModelSerializer(queryset, many=True, context={"request":request})
+    queryset = WatchList.objects.all()
+    def list(self, request):        
+        serializer = serializers.WatchListModelSerializer(self.queryset, many=True, context={"request":request})
         return Response(serializer.data)
 
     def create(self, request):
@@ -549,13 +550,12 @@ class WatchListViewSet1(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        queryset = WatchList.objects.all()
-        watchlist = generics.get_object_or_404(queryset, pk=pk)
+        watchlist = generics.get_object_or_404(self.queryset, pk=pk)
         serializer = serializers.WatchListModelSerializer(watchlist, context={"request":request})
         return Response(serializer.data)
 
     def update(self, request, pk=None):
-        watchlist = generics.get_object_or_404(WatchList.objects.all(), pk=pk)
+        watchlist = generics.get_object_or_404(self.queryset, pk=pk)
         serializer = serializers.WatchListModelSerializer(watchlist, data=request.data, context={"request":request})
         if serializer.is_valid():
             serializer.save()
@@ -563,7 +563,7 @@ class WatchListViewSet1(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk=None):
-        watchlist = generics.get_object_or_404(WatchList.objects.all(), pk=pk)
+        watchlist = generics.get_object_or_404(self.queryset, pk=pk)
         serializer = serializers.WatchListModelSerializer(watchlist, data=request.data, partial=True, context={"request":request})
         if serializer.is_valid():
             serializer.save()
@@ -571,9 +571,54 @@ class WatchListViewSet1(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        watchlist = generics.get_object_or_404(WatchList.objects.all(), pk=pk)
+        watchlist = generics.get_object_or_404(self.queryset, pk=pk)
         watchlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=False, methods=['get'])
+    def watchlist_count(self, request):
+        movies = WatchList.objects.filter(category="MOVIE").count()
+        series = WatchList.objects.filter(category="SERIES").count()
+        return Response({"movies":movies, "series":series})
+
+#=======================Views using GenericViewSet======================
+class WatchListViewSet2(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+    def get_queryset(self):
+        # Custom queryset logic, e.g., applying filters or ordering
+        return WatchList.objects.filter(active=True).order_by('title')
+
+    # Custom action to mark a watchlist item as 'inactive'
+    @action(detail=False, methods=['get'])
+    def watchlist_count(self, request):
+        movies = WatchList.objects.filter(category="MOVIE").count()
+        series = WatchList.objects.filter(category="SERIES").count()
+        return Response({"movies":movies, "series":series})
+    
+#=======================Views using ModelViewSet======================
+class WatchListViewSet3(viewsets.ModelViewSet):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
+    
+    def get_queryset(self):
+        # Custom queryset logic, e.g., applying filters or ordering
+        return WatchList.objects.filter(active=True).order_by('title')
+
+    # Custom action to mark a watchlist item as 'inactive'
+    @action(detail=False, methods=['get'])
+    def watchlist_count(self, request):
+        movies = WatchList.objects.filter(category="MOVIE").count()
+        series = WatchList.objects.filter(category="SERIES").count()
+        return Response({"movies":movies, "series":series})
 
 
 ################################Function Based Views##############################
