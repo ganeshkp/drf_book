@@ -619,6 +619,11 @@ class WatchListViewSet3(viewsets.ModelViewSet):
         movies = WatchList.objects.filter(category="MOVIE").count()
         series = WatchList.objects.filter(category="SERIES").count()
         return Response({"movies":movies, "series":series})
+    
+#=======================Views using ModelViewSet======================
+class WatchListViewSet4(viewsets.ReadOnlyModelViewSet):
+    queryset = WatchList.objects.all()
+    serializer_class = serializers.WatchListModelSerializer
 
 
 ################################Function Based Views##############################

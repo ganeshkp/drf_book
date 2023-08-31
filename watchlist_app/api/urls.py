@@ -4,13 +4,16 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 # Using ViewSet
-router.register(r"watchlist-viewset1", views.WatchListViewSet1, basename="watchlist-viewset1")
+router.register(r"watchlist-viewset1", views.WatchListViewSet1)
 
 # Using GenericViewSet
 router.register(r"watchlist-viewset2", views.WatchListViewSet2, basename="watchlist-viewset2")
 
 # Using ModelViewSet
-router.register(r"watchlist-viewset3", views.WatchListViewSet3, basename="watchlist-viewset3")
+router.register(r"watchlist-viewset3", views.WatchListViewSet3, basename="watchlist_viewset3")
+
+# Using ReadOnlyModelViewSet
+router.register(r"watchlist-viewset4", views.WatchListViewSet4, basename="watchlist_viewset4")
 
 urlpatterns = [
     # Using Basic Serializer for the views
@@ -94,3 +97,5 @@ urlpatterns = [
     path("", include(router.urls))    
     
 ]
+
+# urlpatterns += router.urls
