@@ -11,9 +11,16 @@ router.register(r"watchlist-viewset2", views.WatchListViewSet2, basename="watchl
 
 # Using ModelViewSet
 router.register(r"watchlist-viewset3", views.WatchListViewSet3, basename="watchlist_viewset3")
+router.register(r"streamplatform-viewset3", views.StreamPlatformViewSet3, basename="streamplatform_viewset3")
 
 # Using ReadOnlyModelViewSet
 router.register(r"watchlist-viewset4", views.WatchListViewSet4, basename="watchlist_viewset4")
+
+
+# Using HyperLinkedModelSerializer
+router1 = DefaultRouter()
+router1.register(r"watchlist-viewset5", views.WatchListViewSet5, basename="watchlist-viewset5")
+router1.register(r"streamplatform-viewset5", views.StreamPlatformViewSet5, basename="streamplatform-viewset5")
 
 urlpatterns = [
     # Using Basic Serializer for the views
@@ -94,7 +101,10 @@ urlpatterns = [
     path('watchlist-cbv-try23/', views.WatchlistCBView23.as_view(), name="watchlist-cbv-try23"),
     
     # Using ViewSet
-    path("", include(router.urls))    
+    path("", include(router.urls)),
+    
+    #Using HyperlinkedModelSerializer
+    path('', include((router1.urls, 'app_name'), namespace='instance_name')),
     
 ]
 
