@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth import get_user_model
 from chapter3_project_setup.models import WatchList, StreamPlatform, Review
-from watchlist_app.api import fields
+from chapter6_serializers_views.api import fields
 
 User = get_user_model()
 
@@ -300,25 +300,3 @@ class WatchlistBaseSerializer(serializers.BaseSerializer):
 
     def create(self, validated_data):
         return WatchList.objects.create(**validated_data)
-
-################ Create HyperLinkedModelSerializer to use it for ModelViewSet##############
-class WatchListHyperlinkedModelSerializer1(serializers.HyperlinkedModelSerializer):
-   
-    class Meta:
-        model = WatchList
-        fields = "__all__"
-        read_only_fields = ['full_title']
-        extra_kwargs = {
-            'platform': {'view_name':'instance_name:streamplatform-viewset5-detail'},
-            'url': {'view_name': 'instance_name:watchlist-viewset5-detail', 'lookup_field': 'pk'},         
-        }
-        
-class StreamPlatformHyperlinkedModelSerializer1(serializers.HyperlinkedModelSerializer):
-    watchlist = WatchListHyperlinkedModelSerializer1(many=True, read_only=True)
-
-    class Meta:
-        model = StreamPlatform
-        fields = "__all__"
-        extra_kwargs = {
-            'url':{'view_name':'instance_name:streamplatform-viewset5-detail', 'lookup_field':'pk'}            
-        }

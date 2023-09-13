@@ -19,5 +19,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/watch/', include('watchlist_app.api.urls')),
+    # path('api/watch/', include('watchlist_app.api.urls')),
+    # path('api/chapter3_project_setup/', include('chapter3_project_setup.api.urls')),
+    path('api/chapter6_serializers_views/', include('chapter6_serializers_views.api.urls')),
+    path('api/chapter7_viewsets_routers/', include('chapter7_viewsets_routers.api.urls')),
+    path('api/chapter8_validators/', include('chapter8_validators.api.urls')),
 ]

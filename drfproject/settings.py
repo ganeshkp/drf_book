@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    "watchlist_app",
+    # "watchlist_app",
+    "chapter3_project_setup",
+    "chapter6_serializers_views",
+    "chapter7_viewsets_routers",
+    "chapter8_validators",
 ]
 
 MIDDLEWARE = [
