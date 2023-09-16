@@ -51,7 +51,7 @@ class ReviewModelSerializer(serializers.ModelSerializer):
                 queryset=Review.objects.all(),
                 fields=['review_user', 'watchlist']
             ),
-            UniqueForYearValidator(
+            UniqueForDateValidator(
                 queryset=Review.objects.all(),
                 field='rating',
                 date_field='review_date'
