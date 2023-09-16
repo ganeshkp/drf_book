@@ -52,6 +52,7 @@ class Review(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
+    review_date = models.DateField()
 
     def __str__(self):
         return str(self.rating) + " | " + self.watchlist.title + " | " + str(self.review_user)

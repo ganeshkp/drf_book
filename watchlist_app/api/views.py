@@ -251,13 +251,13 @@ class WatchlistCBView4(APIView):
         """
         Create a new watchlist.
         """
-        serializer = serializers.WatchlistDemoListSerializer(data=request.data, many=True)
+        serializer = serializers.WatchlistDemoListSerializer(data=request.data, many=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def put(self, request, format=None):
-        serializer = serializers.WatchlistDemoListSerializer(data=request.data, many=True)
+        serializer = serializers.WatchlistDemoListSerializer(data=request.data, many=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
         # Perform the bulk update
