@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
@@ -7,8 +6,6 @@ from chapter3_project_setup.models import WatchList, StreamPlatform, Review
 from rest_framework.validators import ( UniqueValidator, 
                                         UniqueTogetherValidator,
                                         UniqueForDateValidator,
-                                        UniqueForMonthValidator,
-                                        UniqueForYearValidator
                                     )
 from . import validators
 

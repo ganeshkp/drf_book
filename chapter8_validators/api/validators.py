@@ -5,8 +5,7 @@ from django.db.models import Q
        
 def validate_watchlist_title(value):
     if len(value)<5 or len(value)>30:
-        raise ValidationError("Movie title shall be meaningful")
-    
+        raise ValidationError("Movie title shall be meaningful")    
 
 def validate_watchlist_type(attrs):
     try:
