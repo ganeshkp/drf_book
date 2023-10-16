@@ -38,11 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
+
     # "watchlist_app",
     "chapter3_project_setup",
     "chapter6_serializers_views",
     "chapter7_viewsets_routers",
     "chapter8_validators",
+    "chapter9_authentication",
 ]
 
 MIDDLEWARE = [
@@ -104,6 +107,20 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+        # 'user_app.api.authentication.BearerAuthentication',
+    ),
+}
+
+
 
 
 # Internationalization

@@ -1,10 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework import permissions
 from chapter3_project_setup.models import WatchList, Review, StreamPlatform
 from . import serializers
 
 
 class WatchListViewSet1(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]  # Ensure that the user is authenticated
     queryset = WatchList.objects.all()
     serializer_class = serializers.WatchListModelSerializer
     

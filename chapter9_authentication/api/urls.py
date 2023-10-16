@@ -12,6 +12,5 @@ router.register(r"review-viewset1", views.ReviewViewSet1)
 
 urlpatterns = [   
     # Using ViewSet
-    path("", include(router.urls)),
-    
+    path("", include(router.urls)),    
 ]
