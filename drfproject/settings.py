@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "chapter7_viewsets_routers",
     "chapter8_validators",
     "chapter9_authentication",
+    "user_app",
 ]
 
 MIDDLEWARE = [
@@ -115,7 +116,7 @@ REST_FRAMEWORK = {
         
     ],
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
         # 'user_app.api.authentication.BearerAuthentication',
     ),
 }
