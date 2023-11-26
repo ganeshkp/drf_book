@@ -168,7 +168,7 @@ class StreamPlatformDetailView2(APIView):
         except StreamPlatform.DoesNotExist:
             return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = serializers.StreamPlatformModelSerializer(platform)
+        serializer = serializers.StreamPlatformModelSerializer(platform, context={'request': request})
         return Response(serializer.data)
         
 class ReviewlistCBView2(APIView):
